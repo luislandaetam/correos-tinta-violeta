@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Guía paso a paso para vincular tu correo corporativo de Tinta Violeta con Gmail. Aprende a configurar el reenvío desde cPanel y el envío mediante SMTP.">
+  <meta name="keywords"
+    content="correo corporativo, Tinta Violeta, Gmail, cPanel, SMTP, configuración de correo, webmail, reenvío de correos">
+  <meta name="author" content="Tinta Violeta">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#4A1569">
+  <title>Configuración de Correos - Tinta Violeta</title>
+  <style>
+    /* Variables de colores - Modo Oscuro */
+    :root {
+      --primary: #4A1569;
+      --primary-light: #6a2296;
+      --accent: #E5D1F0;
+      --bg-main: #121212;
+      --bg-surface: #1e1e1e;
+      --text-main: #e0e0e0;
+      --text-muted: #a0a0a0;
+      --brand-gradient: linear-gradient(180deg, #4A1569 0%, #55177c 100%);
+    }
+
+    /* Reseteo básico y tipografía */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background: var(--brand-gradient);
+      color: #ffffff;
+      padding: 20px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo-placeholder {
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-placeholder span {
+      background: var(--accent);
+      color: var(--primary);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 1rem;
+    }
+
+    .logo {
+      width: 100px;
+    }
+
+    /* Contenedor principal y Sidebar */
+    .container {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      gap: 30px;
+    }
+
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-nav {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      position: sticky;
+      top: 100px;
+      border-top: 4px solid var(--accent);
+    }
+
+    .sidebar-nav h3 {
+      color: var(--accent);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .sidebar-nav ul {
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 10px;
+    }
+
+    .sidebar-nav a {
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 500;
+      display: block;
+      padding: 8px 12px;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      background: rgba(229, 209, 240, 0.1);
+      color: var(--accent);
+      border-left: 3px solid var(--accent);
+    }
+
+    /* Contenido principal */
+    .content {
+      flex-grow: 1;
+      min-width: 0;
+    }
+
+    section {
+      background: var(--bg-surface);
+      border-radius: 10px;
+      padding: 30px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    section h2 {
+      color: var(--accent);
+      border-bottom: 2px solid rgba(229, 209, 240, 0.2);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .intro-text {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      color: var(--text-muted);
+    }
+
+    ol {
+      margin-left: 20px;
+      margin-bottom: 20px;
+    }
+
+    ol li {
+      margin-bottom: 15px;
+    }
+
+    ol li strong {
+      color: var(--accent);
+    }
+
+    .note {
+      background: rgba(74, 21, 105, 0.3);
+      border-left: 4px solid var(--accent);
+      padding: 15px;
+      border-radius: 0 5px 5px 0;
+      font-size: 0.95rem;
+      margin-top: 20px;
+      color: #f0f0f0;
+    }
+
+    /* Estilos para las imágenes reales de screenshots */
+    .screenshot-img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 20px auto;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      cursor: zoom-in;
+      /* Indica al usuario que se puede ampliar */
+      background-color: #151515;
+      /* Fondo por si la imagen tarda en cargar */
+      min-height: 100px;
+    }
+
+    .screenshot-img:hover {
+      transform: scale(1.02);
+      border-color: var(--accent);
+      box-shadow: 0 15px 40px rgba(229, 209, 240, 0.2);
+    }
+
+    /* =========================================
+       NUEVO: Estilos del Lightbox (Galería)
+       ========================================= */
+    #lightbox {
+      display: none;
+      /* Oculto por defecto */
+      position: fixed;
+      z-index: 9999;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(5px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #lightbox.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+    }
+
+    .lightbox-content-wrapper {
+      position: relative;
+      max-width: 90%;
+      max-height: 80vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox-content {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 5px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+      transition: transform 0.3s ease;
+      /* Para el zoom */
+      cursor: zoom-in;
+    }
+
+    .lightbox-content.zoomed {
+      transform: scale(1.5);
+      /* Nivel de zoom */
+      cursor: zoom-out;
+      max-height: none;
+      /* Permite que crezca más allá del viewport */
+    }
+
+    /* Controles del Lightbox */
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+      cursor: pointer;
+      z-index: 10000;
+    }
+
+    .lightbox-download {
+      position: absolute;
+      top: 30px;
+      left: 35px;
+      color: var(--bg-main);
+      background: var(--accent);
+      padding: 8px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      transition: 0.3s;
+      cursor: pointer;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lightbox-download:hover,
+    .lightbox-close:hover {
+      background: #ffffff;
+      color: var(--primary);
+    }
+
+    .lightbox-close:hover {
+      background: transparent;
+      color: var(--accent);
+      transform: scale(1.1);
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      width: auto;
+      padding: 16px;
+      margin-top: -50px;
+      color: white;
+      font-weight: bold;
+      font-size: 30px;
+      transition: 0.3s ease;
+      border-radius: 0 3px 3px 0;
+      user-select: none;
+      -webkit-user-select: none;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 10000;
+    }
+
+    .lightbox-prev {
+      left: 0;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .lightbox-next {
+      right: 0;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .lightbox-prev:hover,
+    .lightbox-next:hover {
+      background-color: var(--primary);
+      color: var(--accent);
+    }
+
+    /* Animaciones Generales */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      will-change: opacity, transform;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    footer {
+      background: #0a0a0a;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 40px 20px;
+      margin-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 15px;
+      display: inline-block;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+      }
+
+      .sidebar-nav {
+        position: relative;
+        top: 0;
+        margin-bottom: 20px;
+      }
+
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+
+      .lightbox-prev,
+      .lightbox-next {
+        font-size: 20px;
+        padding: 10px;
+      }
+
+      .lightbox-content.zoomed {
+        transform: scale(1.2);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="fade-in">
+    <div class="logo-placeholder">
+      <img src="/images/logo.svg" alt="logo Tinta Violeta" class="logo">
+      <span>Tutoriales</span>
+    </div>
+    <div>Configuración de Correos Corporativos</div>
+  </header>
+
+  <div class="container">
+    <!-- Sidebar de Navegación -->
+    <aside class="sidebar fade-in">
+      <nav class="sidebar-nav">
+        <h3>Índice de Pasos</h3>
+        <ul>
+          <li><a href="#fase1">Fase 1: Configurar Recepción</a></li>
+          <li><a href="#fase2">Fase 2: Configurar Envío (SMTP)</a></li>
+          <li><a href="#fase3">Fase 3: Automatizar Respuestas</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="content">
+
+      <!-- Fase 1 -->
+      <section id="fase1" class="fade-in">
+        <h2>Fase 1: Configurar la Recepción (Reenvío desde Webmail)</h2>
+        <p class="intro-text">Esto hará que cada correo que llegue al servidor se copie instantáneamente al Gmail
+          personal.</p>
+
+        <ol>
+          <li>Inicia sesión en tu correo corporativo de <strong>Webmail</strong>.</li>
+          <img src="images/01.png" alt="Pantalla de inicio de sesión en Webmail" class="screenshot-img">
+
+          <li>Haz clic en <strong>Reenviadores</strong> (o
+            Forwarders).</li>
+          <img src="images/02.png" alt="Seleccionar Forwarders" class="screenshot-img">
+          <li>Haz clic en el botón <strong>Añadir Reenviador</strong> (o <em>Add Forwarder</em>).</li>
+          <img src="images/03.png" alt="Botón Añadir reenviador" class="screenshot-img">
+
+          <li>En <strong>Dirección de Destino</strong>, escribe la cuenta de Gmail personal correspondiente (ej.
+            <em>usuario@gmail.com</em>) y da clic en el botón de <strong>Añadir Reenviador</strong> (o <em>Add
+              Forwarder</em>).
+          </li>
+          <img src="images/04.png" alt="Formulario de reenviador lleno" class="screenshot-img">
+          <li>Verás el mensaje de confirmación indicando que los correos se enviarán a la cuenta personal. Haz clic en
+            <strong>Volver</strong>.
+          </li>
+          <img src="images/05.png" alt="Botón para Volver" class="screenshot-img">
+        </ol>
+
+        <div class="note">
+          <strong>Nota para Admins:</strong> Aunque se puede configurar el reenviador sin crear el buzón si el espacio
+          del hosting
+          es muy limitado, es recomendable mantener
+          la cuenta de correo corporativa creada en cPanel (no solo el
+          reenviador) para que cPanel guarde una copia local por seguridad.
+        </div>
+      </section>
+
+      <!-- Fase 2 -->
+      <section id="fase2" class="fade-in">
+        <h2>Fase 2: Configurar el Envío (SMTP en Gmail)</h2>
+        <p class="intro-text">Esto permitirá redactar correos desde Gmail, pero forzando a Google a conectarse al
+          hosting para enviarlos, asegurando que lleguen a nombre del corporativo y no terminen en spam.</p>
+
+        <ol>
+          <li>Abre la cuenta de <strong>Gmail personal</strong> en tu navegador.</li>
+          <li>Haz clic en el ícono de la rueda dentada (Configuración) arriba a la derecha y selecciona <strong>Ver toda
+              la configuración</strong> o Ver
+            todos los ajustes.</li>
+          <img src="images/06.png" alt="Rueda dentada y Ver todos los ajustes en Gmail" class="screenshot-img">
+
+          <li>Ve a la pestaña <strong>Cuentas e importación</strong>.</li>
+          <li>En la sección <strong>Enviar mensaje como</strong>, haz clic en <strong>Agregar otra dirección de correo
+              electrónico</strong>.</li>
+          <img src="images/07.png" alt="Opción Añadir otra dirección en Cuentas e importación" class="screenshot-img">
+
+          <li>Se abrirá una ventana emergente. Ingresa el <strong>Nombre</strong> que quieres que vean los destinatarios
+            y la dirección corporativa (ej. <em>usuario@entintavioleta.com.ve</em>). Deja marcada la casilla "Tratarlo
+            como
+            un
+            alias" y dale a <strong>Paso siguiente</strong>.</li>
+          <img src="images/08.png" alt="Primera ventana emergente con Nombre y Correo" class="screenshot-img">
+
+          <li>Ahora configurarás el servidor SMTP con los datos del hosting:
+            <ul>
+              <li><strong>Servidor SMTP:</strong> <em>mail.entintavioleta.com.ve</em>.</li>
+              <li><strong>Puerto:</strong> Selecciona <strong>465</strong> (recomendado para SSL).</li>
+              <li><strong>Nombre de usuario:</strong> La dirección de correo corporativa completa (ej.
+                <em>usuario@gmail.com</em>).
+              </li>
+              <li><strong>Contraseña:</strong> La contraseña que se asignó a ese correo.</li>
+              <li>Selecciona <strong>Conexión segura mediante SSL</strong>.</li>
+            </ul>
+          </li>
+          <li>Haz clic en <strong>Agregar cuenta</strong>.</li>
+          <img src="images/09.png" alt="Ventana emergente con datos SMTP Puerto 465" class="screenshot-img">
+        </ol>
+
+        <div class="note">
+          Gmail enviará un código de verificación al correo corporativo. Como ya configuraste el reenvío en el Paso 1,
+          ese correo de verificación te llegará instantáneamente a la bandeja de entrada de ese mismo Gmail. Solo espera
+          a que llegue y da clic en el enlace. Te abrirá una ventana, con un botón para confirmar, en el cual debes dar
+          clic.
+        </div>
+        <img src="images/10.png" alt="Llegada de Correo de Confirmación" class="screenshot-img">
+        <img src="images/11.png" alt="Enlace de confirmación" class="screenshot-img">
+        <img src="images/12.png" alt="Botón de Confirmación" class="screenshot-img">
+        <img src="images/13.png" alt="Conexión Confirmada y Volver a Bandeja de Entrada de Gmail"
+          class="screenshot-img">
+      </section>
+
+      <!-- Fase 3 -->
+      <section id="fase3" class="fade-in">
+        <h2>Fase 3: Automatizar las respuestas</h2>
+        <p class="intro-text">Finalmente, haz este pequeño ajuste en Gmail para que este salga
+          automáticamente desde la dirección corporativa al responder un correo:</p>
+
+        <ol>
+          <li>Vuelve a <strong>Configuración > Ver toda
+              la configuración > Cuentas e importación</strong>.</li>
+          <li>En la sección <strong>Enviar mensaje como</strong>, busca la opción que dice <strong>"Cuando responda a un
+              mensaje:"</strong>.</li>
+          <li>Selecciona la opción: <strong>"Responder desde la misma dirección a la que se envió el mensaje"</strong>.
+          </li>
+          <img src="images/14.png" alt="Selección de Responder desde la misma dirección" class="screenshot-img">
+        </ol>
+
+        <div class="note">
+          <strong>¡Listo!</strong> Con esta configuración, si alguien te escribe a tu Gmail personal, respondes desde el
+          personal. Si alguien te escribe a <em>@entintavioleta.com.ve</em>, tu respuesta saldrá por el túnel SMTP
+          usando
+          el correo corporativo. Todo gestionado desde una única bandeja de entrada.
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="fade-in">
+    <p>&copy; 2026 Tinta Violeta. Todos los derechos reservados.</p>
+    <a href="https://entintavioleta.com.ve:2096/" rel="noreferrer noopener nofollow" target="_blank">Ir al Webmail de
+      Tinta Violeta</a>
+  </footer>
+
+  <!-- =========================================
+       NUEVO: Estructura HTML del Lightbox 
+       ========================================= -->
+  <div id="lightbox">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <a id="lightbox-download" class="lightbox-download" download>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Descargar
+    </a>
+
+    <button class="lightbox-prev" onclick="changeImage(-1)">&#10094;</button>
+    <div class="lightbox-content-wrapper">
+      <img id="lightbox-img" class="lightbox-content" onclick="toggleZoom()" alt="Imagen ampliada">
+    </div>
+    <button class="lightbox-next" onclick="changeImage(1)">&#10095;</button>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // --- 1. Animaciones On Scroll ---
+      const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+      // --- 2. Menú activo en Sidebar ---
+      const sections = document.querySelectorAll('section');
+      const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+      window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+          if (scrollY >= (sectionTop - sectionHeight / 3)) {
+            current = section.getAttribute('id');
+          }
+        });
+
+        navLinks.forEach(a => {
+          a.classList.remove('active');
+          if (a.getAttribute('href').includes(current)) {
+            a.classList.add('active');
+          }
+        });
+      });
+
+      // --- 3. Lógica del Lightbox (Galería) ---
+      const images = Array.from(document.querySelectorAll('.screenshot-img'));
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxDownload = document.getElementById('lightbox-download');
+      let currentIndex = 0;
+
+      // Asignar evento click a todas las imágenes
+      images.forEach((img, index) => {
+        img.addEventListener('click', () => {
+          openLightbox(index);
+        });
+      });
+
+      // Abrir Modal
+      window.openLightbox = function (index) {
+        currentIndex = index;
+        updateLightboxContent();
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Evita el scroll del fondo
+      };
+
+      // Cerrar Modal
+      window.closeLightbox = function () {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = 'auto'; // Restaura el scroll
+        lightboxImg.classList.remove('zoomed'); // Quita el zoom al cerrar
+      };
+
+      // Cambiar Imagen (Anterior/Siguiente)
+      window.changeImage = function (direction) {
+        currentIndex += direction;
+
+        // Ciclo infinito: Si pasa la última, vuelve a la primera y viceversa
+        if (currentIndex >= images.length) currentIndex = 0;
+        if (currentIndex < 0) currentIndex = images.length - 1;
+
+        lightboxImg.classList.remove('zoomed'); // Resetea zoom al cambiar
+        updateLightboxContent();
+      };
+
+      // Actualizar imagen y link de descarga en el modal
+      function updateLightboxContent() {
+        const currentSrc = images[currentIndex].src;
+        lightboxImg.src = currentSrc;
+        lightboxDownload.href = currentSrc;
+      }
+
+      // Función de Zoom al hacer click
+      window.toggleZoom = function () {
+        lightboxImg.classList.toggle('zoomed');
+      };
+
+      // Navegación con teclado
+      document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('active')) return;
+
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowRight') changeImage(1);
+        if (e.key === 'ArrowLeft') changeImage(-1);
+      });
+
+      // Cerrar al hacer click fuera de la imagen (en el fondo oscuro)
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target.classList.contains('lightbox-content-wrapper')) {
+          closeLightbox();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
